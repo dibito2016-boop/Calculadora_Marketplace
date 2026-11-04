@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calculadora Marketplace</title>
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+
+
+<body class="min-h-screen bg-slate-100 text-slate-800">
+
+
+    <header class="bg-blue-700 px-4 py-6 text-white shadow-md">
+        <div class="mx-auto max-w-3xl">
+            <h1 class="text-2xl font-bold">
+                Calculadora Marketplace
+            </h1>
+
+            <p class="mt-1 text-sm text-blue-100">Analise seus preços e suas margens de lucro</p>
+
+        </div>
+    </header>
+    <main class="mx-auto max-w-3xl px-4 py-6">
+        <nav class="mb-6 grid grid-cols-3 gap-2 rounded-xl bg-white p-2 shadow-sm">
+
+        <button 
+            type="button"
+            onclick="mostrarAba('meli')"
+            id="btn-meli"
+            class="rounded-lg bg-blue-700 p-2 text-sm font-semibold text-white">
+            Mercado Livre
+        </button>
+
+            <button 
+                type="button" 
+                onclick="mostrarAba('direta')" 
+                id="btn-direta"
+                class="rounded-lg p-2 text-sm font-semibold text-slate-600">
+                Venda Direta
+            </button>
+
+            <button
+                type="button"
+                onclick="mostrarAba('historico')"
+                id="btn-historico"
+                class="rounded-lg p-2 text-sm font-semibold text-slate-600">
+                Histórico
+            </button>
+
+
+        </nav>
+
+        <section id="aba-meli" class="rounded-xl bg-white p-5 shadow-sm">
+
+            <h2 class="text-xl font-bold">
+                Calculadora Mercado Livre
+            </h2>
+
+            <p class="mt-1 mb-5 text-sm text-slate-500">
+                Descubra a margem de lucro da sua venda.
+            </p>
+
+            <form onsubmit="event.preventDefault()">
+                <div class="mb-4">
+                    <label for="custo-meli"
+                    class="mb-1 block text-sm font-medium">
+                Custo do produto (R$)
+                </label>
+
+                <input type="number" id="custo-meli" min="0" step="0.01"
+                placeholder="Ex: 50,00"
+                class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"> 
+                </div>
+
+                <div class="mb-4">
+                    <label for="venda-meli" class="mb-1 block text-sm font-medium">
+                        Valor real da venda (R$)
+                    </label>
+
+                    <input type="number" id="venda-meli" min="0" step="0.01"
+                    placeholder="Ex: 100,00" class="w-full rounded-Ig border border-slate-300 p-3 outline-none focus:border-blue-500">
+
+                </div>
+
+                <button 
+                    type="button"
+                    id="calcular-meli"
+                    class="mt-3 w-full rounded-lg bg-yellow-600 p-3 font-semibold text-white hover:bg-yellow-700">
+                    Calcular valor de venda
+                </button>
+
+            </form>
+
+                <div id="resultado-meli" class="mt-5 hidden rounded-lg bg-blue-50 p-4"></div>
+
+
+        </section>
+
+    <section id="aba-direta" class="hidden rounded-xl bg-white p-5 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-800">
+            Calculadora de Venda Direta
+        </h2>
+            <p class="mt-1 mb-5 text-sm text-slate-500">
+                Calcule sua margem sem taxas de plataforma.
+            </p> 
+        <form onsubmit="event.preventDefault()">
+            <div class="mb-4">
+                <label for="custo-direta" class="mb-1 block text-sm font-medium">
+                    Custo do produto (R$)
+                </label>
+                    <input type="number" id="custo-direta" min="0" step="0.01" placeholder="Ex: 50,00" class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500">
+                       
+
+            </div>
+
+            <div class="mb-4">
+                <label for="frete-direta" class="mb-1 block text-sm font-medium">
+                    Custo do envio (R$)
+                </label>
+
+                <input
+                    type="number"
+                    id="frete-direta"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex: 15,00"
+                    class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+
+            </div>
+
+            <div class="mb-4">
+                <label for="venda-direta" class="mb-1 block text-sm font-medium">
+                    Valor da venda (R$)
+                </label>
+            <input type="number" id="venda-direta" min="0" step="0.01" placeholder="Ex: 100,00" class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500">
+
+            </div>
+
+            <button type="button" id="calcular-direta"
+                class="w-full rounded-lg bg-emerald-600 p-3 font-semibold text-white hover:bg-emerald-700">
+                Calcular valor de venda
+            </button>
+
+        </form>
+
+        <div id="resultado-direta" class="mt-5 hidden rounded-lg bg-emerald-50 p-4"></div>
+
+
+
+        </section>
+    
+    <section id="aba-historico" class="hidden rounded-xl bg-white p-5 shadow-sm">
+
+        <h2 class="text-xl font-bold text-slate-800">
+            Histórico de Venda
+        </h2>
+
+        <p class="mt-1 mb-5 text-sm text-slate-500">
+            Registre e consulte suas vendas 
+        </p>
+    <form id="form-venda">
+
+            <div class="mb-4">
+                    <label for="cliente" class="mb-1 block text-sm font-medium">
+                        Nome do cliente
+                    </label>
+                <input type="text" id="cliente" placeholder="Nome completo" class="w-full rounded-lg border border-slate-300 p-3">
+
+            </div>
+
+            <div class="mb-4">
+                <label for="telefone" class="mb-1 block text-sm font-medium">
+                    Telefone
+                </label>
+            <input type="tel" id="telefone" placeholder="(00)00000-0000" class="w-full rounded-lg border border-slate-300 p-3">
+
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="mb-1 block text-sm font-medium">
+                    E-mail
+                </label>
+            <input type="email" id="email" placeholder="cliente@email.com" class="w-full rounded-lg border border-slate-300 p-3">
+
+            </div>
+
+            <div class="mb-4">
+                <label for="produto" class="mb-1 block text-sm font-medium">
+                    Produto vendido
+                </label>
+
+                <input type="text" id="produto" placeholder="Nome do produto" class="w-full rounded-lg border border-slate-300 p-3">
+
+
+            </div>
+
+            <div class="mb-4">
+                <label for="valor-venda" class="mb-1 block text-sm font-medium">
+                    Valor da venda (R$)
+                </label>
+
+                <input type="number" id="valor-venda" min="0" step="0.01" placeholder="Ex: 60,00" class="w-full rounded-lg border border-slate-300 p-3">
+
+            </div>
+
+            <div class="mb-4">
+                <label for="custo-registro" class="mb-1 block text-sm font-medium">
+                    Custo do produto (R$)
+                </label>
+
+                <input 
+                    type="number"
+                    id="custo-registro"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex: 30,00"
+                    class="w-full rounded-lg border border-slate-300 p-3">
+            </div>
+
+            <div class="mb-4">
+                <label for="frete-registro" class="mb-1 block text-sm font-medium">
+                    Custo do envio (R$)
+                </label>
+
+                <input
+                    type="number"
+                    id="frete-registro"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex: 15,00"
+                    class="w-full rounded-lg border border-slate-300 p-3">
+            </div>
+
+                    <input type="number" id="custo-registro" min="0" step="0.01" placeholder="Ex: 30,00" class="w-full rounded-lg border border-slate-300 p-3">
+
+            </div>
+
+                <button type="submit" class="w-full rounded-lg bg-emerald-600 p-3 font-semibold text-white hover:bg-emerald-700">
+                    Registrar venda
+                </button>
+
+    </form>
+
+            <div class="mt-8">
+                <h3 class="mb-3 text-lg font-semibold">
+                    Vendas registradas
+                </h3>
+
+                <div id="lista-vendas" class="text-sm text-slate-500">
+                    Nenhuma venda registrada ainda.
+                </div>
+            </div>
+    </section>
+        <footer class="mt-6 text-center text-xs text-slate-500">
+            Calculadora Marketplace
+            Projeto em desenvolvimento
+        </footer>
+
+    </main>
+
+    <script>
+
+        const MARGEM_MINIMA = 30;
+
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+
+        function mostrarAba(abaSelecionada){
+            const abas = ['meli', 'direta', 'historico'];
+            abas.forEach(function(aba) {
+                document.getElementById('aba-' + aba).classList.add('hidden');
+
+                const botao = document.getElementById('btn-' + aba);
+        
+                botao.classList.remove('bg-blue-700', 'text-white');
+                botao.classList.add('text-slate-600');
+        });
+            document.getElementById('aba-' + abaSelecionada).classList.remove('hidden');
+
+            const botaoSelecionado = document.getElementById('btn-' + abaSelecionada);
+
+            botaoSelecionado.classList.add('bg-blue-700', 'text-white');
+            botaoSelecionado.classList.remove('text-slate-600');
+        }
+
+        document.getElementById('calcular-meli').addEventListener('click', function() {
+        
+        
+
+            const custo = Number(document.getElementById('custo-meli').value);
+            const venda = Number(document.getElementById('venda-meli').value);
+
+            console.log("Custo:", custo);
+            console.log("Venda:", venda);
+
+            const resultado = document.getElementById('resultado-meli');
+
+            if (custo <= 0 || venda <=0) {
+                resultado.classList.remove('hidden');
+                resultado.innerHTML = `
+                    <p class="font-semibold text-red-600">
+                        Informe valores maiores que zero.
+                    </p>
+
+                `;
+
+                    
+                    
+
+                return;
+            }
+
+            const comissao = venda * 0.14;
+            const taxaFixa = 6.75;
+            const lucro = venda - custo - comissao - taxaFixa;
+            const margem = (lucro / venda) * 100;
+            const precoSugerido = (custo + 6.75) / (1 - 0.14 - MARGEM_MINIMA / 100);
+            const precoSugeridoFinal = Math.ceil(precoSugerido * 100) / 100;
+
+            let classificacao = '';
+            let cor = '';
+
+            if (margem < MARGEM_MINIMA) {
+                classificacao = 'Margem abaixo dos 30%.';
+                cor = 'text-red-600';
+            }else if (margem === MARGEM_MINIMA) {
+                classificacao = 'Margem mínima de 30%.';
+                cor = 'text-green-600';
+            }
+
+
+            resultado.classList.remove('hidden');
+
+            resultado.innerHTML= `
+            <p class="mt-3 font-semibold text-blue-700">
+                Preço sugerido para atingir 30% de margem:
+                ${formatarMoeda(precoSugeridoFinal)}
+            </p>
+                <div class="rounded-lg bg-white p-4 shadow">
+
+                    <h3 class="mb-3 text-lg font-bold">
+                        Resultado da análise
+                    </h3>
+
+                    <p class="mb-2 text-slate-600">
+                        Custo do produto:
+                        <strong>${formatarMoeda(custo)}</strong>
+                    </p>
+
+                    <p class="mb-2 text-slate-600">
+                        Valor da venda
+                        <strong>${formatarMoeda(venda)}</strong>
+                    </p>
+
+                    <p class="mb-2 text-slate-600">
+                        Comissão (14%):
+                        <strong>${formatarMoeda(comissao)}</strong>
+                    </p>
+
+                    <p class="mb-2 text-slate-600">
+                        Taxa fixa:
+                        <strong>${formatarMoeda(taxaFixa)}</strong>
+                    </p>  
+                    
+                    <hr class="my-3">
+
+                    <p class="mb-2 text-lg font-bold ${lucro >=0 ? 'text-green-600': 'text-red-600'}">
+                        Lucro líquido: ${formatarMoeda(lucro)}
+                    </p>
+                    
+                    <p class="text-lg font-bold text-blue-700">
+                        Margem de lucro: ${margem.toFixed(2).replace('.', ',')}%
+                    </p>
+        
+                    <p class="mt-3 font-semibold ${cor}">
+                        ${classificacao}
+                    </p>
+            </div>
+        `;
+        });
+
+        document.getElementById('calcular-direta').addEventListener('click', function() {
+            const custo =Number(document.getElementById('custo-direta').value);
+            const frete = Number(document.getElementById('frete-direta').value);
+            const venda = Number(document.getElementById('venda-direta').value);
+        
+            
+            
+            const resultado = document.getElementById('resultado-direta');
+
+            if (custo <= 0 || venda <=0 || frete <0) {
+                resultado.classList.remove('hidden');
+
+                resultado.innerHTML = `
+                    <p class="font-semibold text-red-600">
+                        Informe um custo de produto e um valor de venda maiores que zero.
+                        O custo de envio não pode ser negativo.
+                    </p>
+
+                    
+
+                    `;
+
+                   return;
+                
+            }
+        
+            const custoTotal = custo + frete;
+            const lucro = venda - custoTotal;
+            const margem = (lucro / venda) * 100;
+            const precoSugerido = custoTotal / (1 - MARGEM_MINIMA / 100);
+            const precoSugeridoFinal = Math.ceil(precoSugerido * 100) / 100;
+            let classificacao ;
+        
+
+            if (margem < MARGEM_MINIMA) {
+                classificacao = `
+                <p class="font-semibold text-red-600">
+                    Margem abaixo dos 30% desejados.
+                </p>
+                `;
+                
+            } else if (margem === MARGEM_MINIMA) {
+                classificacao = `
+                    <p class="font-semibold text-green-600">
+                        Você atingiu a margem de 30%!
+                    </p>
+                `;
+            } else {
+                classificacao = `
+                    <p class="font-semibold text-green-600">
+                        Margem acima dos 30% desejados!
+                    </p>
+                `;
+           
+            }
+            resultado.classList.remove('hidden');
+            resultado.innerHTML = `
+                <div class="space-y-2">
+                    <p>
+                        <strong>Custo total:</strong>
+                        ${formatarMoeda(custoTotal)}
+                    </p>
+
+                    <p>
+                        <strong>Lucro na venda:</strong>
+                        ${formatarMoeda(lucro)}
+                    </p>
+
+                    <p>
+                        <strong>Margem atual:</strong>
+                        ${margem.toFixed(2)}%
+                    </p>
+
+                    ${classificacao}
+
+                    <p class="mt-3 font-semibold text-blue-700">
+                        Preço sugerido para atingir 30% de margem:
+                        ${formatarMoeda(precoSugeridoFinal)}
+                    </p>
+                </div>
+            `;
+        });
+
+        let vendas = JSON.parse(localStorage.getItem('vendaMarketplace')) || [];
+
+        function salvarVendas() {
+            localStorage.setItem('vendasMarketplace', JSON.stringify(vendas));
+
+        }
+
+        function renderizarVendas() {
+            const listaVendas = document.getElementById('lista-vendas');
+
+            if (vendas.lenght === 0) {
+                listaVendas.innerHTML = `
+                    <p class="text-slate-500">
+                        Nenhuma venda registrada anda.
+                    </p>
+                `;
+                return;
+            }
+            
+            listaVendas.innerHTML = vendas.map(function(venda) {
+                return ` 
+                    <div class="mb-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                        <h4 class="mb-2 text-lg font-bold text-slate-800">
+                            ${venda.produto}
+                        </h4>
+
+                        <p class="mb-1">
+                            <strong>Cliente:</strong>
+                            ${venda.cliente}
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Telefone:</strong>
+                            ${venda.telefone || 'Não informado'}
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>E-mail:</strong>
+                            ${venda.email || 'Não informado'}
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Data:</strong>
+                            ${venda.data}
+                        </p>
+
+                        <hr class="my-3">
+
+                        <p class="mb-1">
+                            <strong>Valor da venda:</strong>
+                            ${formatarMoeda(venda.valorVenda)}
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Custo do produto:</strong>
+                            ${formatarMoeda(venda.custoProduto)}
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Custo do envio:</strong>
+                            ${formatarMoeda(venda.custoEnvio)}
+                        </p>
+
+                        <p class="mt-2 text-lg font-bold ${venda.lucro >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            Lucro: ${formatarMoeda(venda.lucro)}
+                        </p>
+
+                        <button
+                            type="button"
+                            data-id="${venda.id}"
+                            class="mt-3 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700">
+                            Excluir venda
+                        </button>
+                    
+
+                    </div>
+                `;
+                
+            }).join('');
+        }
+
+        document.getElementById('form-venda').addEventListener('submit', function(event) {
+        
+            event.preventDefault();
+
+            const cliente = document.getElementById('cliente').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const produto = document.getElementById('produto').value.trim();
+            
+            const valorVenda = Number(document.getElementById('valor-venda').value);
+            const custoProduto = Number(document.getElementById('custo-registro').value);
+            const custoEnvio = Number(document.getElementById('frete-registro').value);
+
+            if (
+                cliente === '' ||
+                produto === '' ||
+                valorVenda <= 0 ||
+                custoProduto <=0 ||
+                custoEnvio <0
+
+            ) {
+                alert('Preencha o cliente, o produto e os vlaores corretamente.');
+
+                return;
+
+            }
+
+            const lucro = valorVenda - custoProduto - custoEnvio;
+
+            const novaVenda = {
+                id: Date.now(),
+                cliente: cliente,
+                telefone: telefone,
+                email: email,
+                produto: produto,
+                valorVenda: valorVenda,
+                custoProduto: custoProduto,
+                custoEnvio: custoEnvio,
+                lucro: lucro,
+                data: new Date().toLocaleString('pt-BR')
+            };
+
+            vendas.push(novaVenda);
+            salvarVendas();
+            renderizarVendas();
+
+            document.getElementById('form-venda').reset();
+            alert('venda registrada com sucesso!');
+        });
+
+        document.getElementById('lista-vendas').addEventListener('click', function(event){
+
+            const botao = event.target.closest('button[data-id]');
+
+            if (!botao) {
+                return;
+            }
+
+            const idVenda = Number(botao.dataset.id);
+            vendas=vendas.filter(function(venda) {
+                return venda.id !== idVenda;
+            });
+
+            salvarVendas();
+
+            renderizarVendas();
+        });
+
+        renderizarVendas();
+    
+    
+           
+            
+
+
+    </script>
+    
+</body>
+</html>
