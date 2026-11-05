@@ -77,7 +77,12 @@
                 <input type="number" id="custo-meli" min="0" step="0.01"
                 placeholder="Ex: 50,00"
                 class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"> 
-                </div>
+                
+                <button type="button" id="sugerir-preco-meli" class="mt-3 w-full rounded-lg border-2 border-blue-600 bg-blue-50 p-3 font-semibold text-blue-700 hover:bg-blue-100">
+                    Sugerir preço de venda
+                </button>
+            </div>
+
 
                 <div class="mb-4">
                     <label for="venda-meli" class="mb-1 block text-sm font-medium">
@@ -116,7 +121,13 @@
                     Custo do produto (R$)
                 </label>
                     <input type="number" id="custo-direta" min="0" step="0.01" placeholder="Ex: 50,00" class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500">
-                       
+                    
+                    <button 
+                        type="button"
+                        id="sugerir-preco-direta"
+                        class="mt-3 w-full rounded-lg border-2 border-blue-600 bg-blue-50 p-3 font-semibold text-blue-700 hover:bg-blue-100">
+                        Sugerir preço de venda
+                    </button>
 
             </div>
 
@@ -131,7 +142,7 @@
                     min="0"
                     step="0.01"
                     placeholder="Ex: 15,00"
-                    class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                    class="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500">
 
             </div>
 
@@ -302,40 +313,45 @@
             const custo = Number(document.getElementById('custo-meli').value);
             const venda = Number(document.getElementById('venda-meli').value);
 
-            console.log("Custo:", custo);
-            console.log("Venda:", venda);
-
             const resultado = document.getElementById('resultado-meli');
 
-            if (custo <= 0 || venda <=0) {
+            const taxaFixa = 6.75;
+            const percentualComissao = 0.14;
+            
+
+            if (custo <= 0) {
                 resultado.classList.remove('hidden');
                 resultado.innerHTML = `
                     <p class="font-semibold text-red-600">
-                        Informe valores maiores que zero.
+                        Informe um custo do produto maior que zero.
                     </p>
 
                 `;
-
-                    
-                    
-
+        
                 return;
             }
 
-            const comissao = venda * 0.14;
-            const taxaFixa = 6.75;
-            const lucro = venda - custo - comissao - taxaFixa;
-            const margem = (lucro / venda) * 100;
-            const precoSugerido = (custo + 6.75) / (1 - 0.14 - MARGEM_MINIMA / 100);
-            const precoSugeridoFinal = Math.ceil(precoSugerido * 100) / 100;
+            if (venda <= 0) {
+                resultado.classList.remove('hidden');
+                resultado.innerHTML = `
+                    <p class="font-semibold text-red-600">
+                        Informe o valor real da venda ou utilize o botão Sugerir preço de venda.
+                    </p>
+                `;
+                return;
+            }
+
+           const comissao = venda * percentualComissao;
+           const lucro = venda - custo - comissao - taxaFixa;
+           const margem = (lucro / venda) * 100;
 
             let classificacao = '';
             let cor = '';
 
-            if (margem < MARGEM_MINIMA) {
+            if (margem < 30) {
                 classificacao = 'Margem abaixo dos 30%.';
                 cor = 'text-red-600';
-            }else if (margem === MARGEM_MINIMA) {
+            }else {
                 classificacao = 'Margem mínima de 30%.';
                 cor = 'text-green-600';
             }
@@ -343,13 +359,9 @@
 
             resultado.classList.remove('hidden');
 
-            resultado.innerHTML= `
-            <p class="mt-3 font-semibold text-blue-700">
-                Preço sugerido para atingir 30% de margem:
-                ${formatarMoeda(precoSugeridoFinal)}
-            </p>
-                <div class="rounded-lg bg-white p-4 shadow">
+           resultado.innerHTML = `
 
+                <div class="rounded-lg bg-white p-4 shadow">
                     <h3 class="mb-3 text-lg font-bold">
                         Resultado da análise
                     </h3>
@@ -360,7 +372,7 @@
                     </p>
 
                     <p class="mb-2 text-slate-600">
-                        Valor da venda
+                        Valor da venda:
                         <strong>${formatarMoeda(venda)}</strong>
                     </p>
 
@@ -372,24 +384,69 @@
                     <p class="mb-2 text-slate-600">
                         Taxa fixa:
                         <strong>${formatarMoeda(taxaFixa)}</strong>
-                    </p>  
-                    
+                    </p>
+
                     <hr class="my-3">
 
-                    <p class="mb-2 text-lg font-bold ${lucro >=0 ? 'text-green-600': 'text-red-600'}">
+                    <p class="mb-2 text-lg font-bold ${lucro >=0 ? 'text-green-600' : 'text-red-600'}">
                         Lucro líquido: ${formatarMoeda(lucro)}
                     </p>
-                    
+
                     <p class="text-lg font-bold text-blue-700">
-                        Margem de lucro: ${margem.toFixed(2).replace('.', ',')}%
+                        Margem de lucro:
+                        ${margem.toFixed(2).replace('.', ',')}%
                     </p>
-        
+
                     <p class="mt-3 font-semibold ${cor}">
                         ${classificacao}
                     </p>
+
+            
             </div>
         `;
+            
         });
+
+        document.getElementById('sugerir-preco-meli').addEventListener('click', function() {
+
+            const custo = Number(document.getElementById('custo-meli').value);
+            const resultado = document.getElementById('resultado-meli');
+            const taxaFixa = 6.75;
+            const percentualComissao = 0.14;
+            const margemDesejada = 30;
+
+            if (custo <= 0) {
+                resultado.classList.remove('hidden');
+
+                resultado.innerHTML = `
+                    <p class="font-semibold text-red-600">
+                        Informe um custo do produto maior que zero.
+                    </p>
+                `;
+                return;
+            }
+
+            const precoSugerido = 
+                (custo + taxaFixa) /
+                (1 - percentualComissao - margemDesejada / 100);
+
+            const precoSugeridoFinal =
+                Math.ceil(precoSugerido * 100) /100;
+
+            resultado.classList.remove('hidden');
+
+            resultado.innerHTML = `
+                <div class="rounded-lg" bg-white p-4 shadow">
+                    <p class="font-semibold text-blue-700">
+                        Preço sugerido para atingir 30% de margem:
+                    </p>
+
+                    <p class="mt-2 text-2xl font-bold text-green-600">
+                        ${formatarMoeda(precoSugeridoFinal)}
+                    </p>
+                </div>
+            `;
+        })
 
         document.getElementById('calcular-direta').addEventListener('click', function() {
             const custo =Number(document.getElementById('custo-direta').value);
@@ -399,14 +456,14 @@
             
             
             const resultado = document.getElementById('resultado-direta');
+            const MARGEM_MINIMA = 30;
 
-            if (custo <= 0 || venda <=0 || frete <0) {
+            if (custo <= 0) {
                 resultado.classList.remove('hidden');
 
                 resultado.innerHTML = `
                     <p class="font-semibold text-red-600">
-                        Informe um custo de produto e um valor de venda maiores que zero.
-                        O custo de envio não pode ser negativo.
+                        Informe um custo de produto maior que zero.
                     </p>
 
                     
@@ -416,14 +473,38 @@
                    return;
                 
             }
+
+            if (frete < 0) {
+
+                resultado.classList.remove('hidden');
+
+                resultado.innerHTML= `
+                    <p class="font-semibold text-red-600">
+                        O custo do envio não pode ser negativo.
+                    </p>
+
+                `;
+
+                return;
+            }
+
+            if (venda <= 0) {
+
+                resultado.classList.remove('hidden');
+
+                resultado.innerHTML = `
+                    <p class="font-semibold text-red-600">
+                        Informe o valor real da venda ou utilize o botão Sugerir preço de venda.
+                    </p>
+                `;
+
+                return;
+            }
         
             const custoTotal = custo + frete;
             const lucro = venda - custoTotal;
             const margem = (lucro / venda) * 100;
-            const precoSugerido = custoTotal / (1 - MARGEM_MINIMA / 100);
-            const precoSugeridoFinal = Math.ceil(precoSugerido * 100) / 100;
-            let classificacao ;
-        
+            let classificacao ='';
 
             if (margem < MARGEM_MINIMA) {
                 classificacao = `
@@ -449,30 +530,104 @@
             resultado.classList.remove('hidden');
             resultado.innerHTML = `
                 <div class="space-y-2">
+
+                    <h3 class="mb-3 text-lg font-bold">
+                        Resultado da análise
+                    </h3>
+
+                    <p>
+                        <strong>Custo do produto:</strong>
+                        ${formatarMoeda(custo)}
+                    </p>
+
+                    <p>
+                        <strong>Custo do envio:</strong>
+                        ${formatarMoeda(frete)}
+                    </p>
+
                     <p>
                         <strong>Custo total:</strong>
                         ${formatarMoeda(custoTotal)}
                     </p>
 
-                    <p>
-                        <strong>Lucro na venda:</strong>
-                        ${formatarMoeda(lucro)}
+                    <p 
+                        <strong>Valor da venda:</strong>
+                        ${formatarMoeda(venda)}
                     </p>
 
-                    <p>
-                        <strong>Margem atual:</strong>
-                        ${margem.toFixed(2)}%
+                    <hr class="my-3">
+
+                    <p class="text-lg font-bold ${lucro >= 0 ? 'text-green-600' : 'text-red-600'}">
+                        Lucro líquido: ${formatarMoeda(lucro)}
+                    </p>
+
+                    <p class="text-lg font-bold text-blue-700">
+                        Margem de lucro:
+                        ${margem.toFixed(2).replace('.', ',')}%
                     </p>
 
                     ${classificacao}
 
-                    <p class="mt-3 font-semibold text-blue-700">
-                        Preço sugerido para atingir 30% de margem:
-                        ${formatarMoeda(precoSugeridoFinal)}
-                    </p>
+                    
                 </div>
             `;
         });
+
+            document.getElementById('sugerir-preco-direta').addEventListener('click', function() {
+                const custo = Number(document.getElementById('custo-direta').value);
+                const frete = Number(document.getElementById('frete-direta').value);
+
+                const resultado = document.getElementById('resultado-direta');
+
+                const MARGEM_MINIMA = 30;
+
+                if (custo <= 0) {
+                    resultado.classList.remove('hidden');
+
+                    resultado.innerHTML = `
+                        <p class="font-semibold text-red-600">
+                            Informe um custo do produto maior que zero.
+                        </p>
+                    `;
+
+                    return;
+                }
+
+                if (frete < 0) {
+                    resultado.classList.remove('hidden');
+                    resultado.innerHTML = `
+                        <p class="font-semibold text-red-600">
+                            O custo do envio não pode ser negativo.
+                        </p>
+                    `;
+
+                    return;
+                }
+
+                const custoTotal = custo + frete;
+
+                const precoSugerido = custoTotal / (1 - MARGEM_MINIMA / 100);
+
+                const precoSugeridoFinal = Math.ceil(precoSugerido * 100) / 100;
+
+                resultado.classList.remove('hidden');
+
+                resultado.innerHTML = `
+                    <div class="rounded-lg bg-white p-4 shadow">
+                        <p class="font-semibold text-blue-700">
+                            Preço sugerido para atingir 30% de margem:
+                        </p>
+
+                        <p class="mt-2 text-2xl font-bold text-green-600">
+                            ${formatarMoeda(precoSugeridoFinal)}
+                        </p>
+
+                        <p class="mt-2 text-sm text-slate-500">
+                            Considerando o custo do produto e o custo do envio.
+                        </p>
+                    </div>
+                `;
+            });
 
         let vendas = JSON.parse(localStorage.getItem('vendaMarketplace')) || [];
 
